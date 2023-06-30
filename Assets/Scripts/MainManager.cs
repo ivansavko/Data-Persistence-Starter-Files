@@ -12,11 +12,13 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
-    
+    public GameObject upperScreenText;
+
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
+    public bool m_newHighScore = false;
 
     
     // Start is called before the first frame update
@@ -36,6 +38,7 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        ShowBestScore();
     }
 
     private void Update()
@@ -71,6 +74,33 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
+        ScoreManager.Instance.CheckScore(m_Points);
         GameOverText.SetActive(true);
+        if (m_newHighScore)
+        {
+            GameOverText.GetComponent<Text>().text = "Congratulation! \nNew High Score!";
+            ShowBestScore();
+        }
+        else
+        {
+            GameOverText.GetComponent<Text>().text = "GameOver!\nPress Space to Restart";
+        }
+        m_newHighScore = false;
+    }
+
+    public void ShowBestScore()
+    {
+        if (ScoreManager.Instance.bestPlayer == "")
+        {
+            upperScreenText.GetComponent<Text>().text = "Be a Winner!";
+        }
+        else
+        {
+            string bestPlayer = ScoreManager.Instance.bestPlayer;
+            int bestScore = ScoreManager.Instance.bestScore;
+            upperScreenText.GetComponent<Text>().text = $"Best Score : {bestPlayer} : {bestScore}";
+        }
+
+        
     }
 }
